@@ -27,9 +27,17 @@ const metaScraper = (url) => (
       }
 
       try {
+        // Create the return object.
+        const returnData = { error: false };
+
+        // Add the resolved url.
+        const resolvedUrl = data.request.res.responseUrl;
+        returnData.resolvedUrl = resolvedUrl;
+
         // Load the return data into cheerio.
         const $ = cheerio.load(data.data);
         let allTags;
+
         // Filter head tags so that we just have "meta".
         if ($('head')[0] && $('head')[0].children) {
           allTags = $('head')[0].children.filter(item => item.name === 'meta');
@@ -44,11 +52,10 @@ const metaScraper = (url) => (
         };
         const metaArray = allTags.reduce(getAttribs, []);
 
-        // Create the return object and add the meta data.
-        const returnData = { error: false };
+        // Add HTML meta tags.
         returnData.allTags = metaArray;
 
-        // Add a proertry that has the processed Twitter data.
+        // Add a property that has the processed Twitter data.
         const twitter = metaArray.reduce(getTwitter, {});
         returnData.twitter = keys(twitter).length === 0 ? false : twitter;
 
@@ -56,10 +63,10 @@ const metaScraper = (url) => (
         const og = metaArray.reduce(getOg, {});
         returnData.og = keys(og).length === 0 ? false : og;
 
-        // Add page page title.
+        // Add page title.
         returnData.pageTitle = $('title')[0].children[0].data || false;
 
-        // Add publications date if available.
+        // Add publication date if available.
         const publishedTime = metaArray.filter(item => item.property && item.property === 'article:published_time');
         returnData.pubDate = publishedTime.length > 0 ? publishedTime[0].content : returnData.og.pubdate ? returnData.og.pubdate : false;
 

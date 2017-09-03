@@ -42,9 +42,17 @@ var metaScraper = function metaScraper(url) {
     }
 
     try {
+      // Create the return object.
+      var returnData = { error: false };
+
+      // Add the resolved url.
+      var resolvedUrl = data.request.res.responseUrl;
+      returnData.resolvedUrl = resolvedUrl;
+
       // Load the return data into cheerio.
       var $ = _cheerio2.default.load(data.data);
       var allTags = void 0;
+
       // Filter head tags so that we just have "meta".
       if ($('head')[0] && $('head')[0].children) {
         allTags = $('head')[0].children.filter(function (item) {
@@ -60,11 +68,10 @@ var metaScraper = function metaScraper(url) {
       };
       var metaArray = allTags.reduce(getAttribs, []);
 
-      // Create the return object and add the meta data.
-      var returnData = { error: false };
+      // Add HTML meta tags.
       returnData.allTags = metaArray;
 
-      // Add a proertry that has the processed Twitter data.
+      // Add a property that has the processed Twitter data.
       var twitter = metaArray.reduce(getTwitter, {});
       returnData.twitter = (0, _objectKeys2.default)(twitter).length === 0 ? false : twitter;
 
@@ -72,10 +79,10 @@ var metaScraper = function metaScraper(url) {
       var og = metaArray.reduce(getOg, {});
       returnData.og = (0, _objectKeys2.default)(og).length === 0 ? false : og;
 
-      // Add page page title.
+      // Add page title.
       returnData.pageTitle = $('title')[0].children[0].data || false;
 
-      // Add publications date if available.
+      // Add publication date if available.
       var publishedTime = metaArray.filter(function (item) {
         return item.property && item.property === 'article:published_time';
       });

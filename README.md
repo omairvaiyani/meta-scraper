@@ -47,6 +47,7 @@ There are a number properties that are provided along with reasonable fallbacks:
 - `twitter`: All available Twitter tags. If those aren't available, this is `false`.
 - `error`: If `error` is set to `true`, then there will be an additional property available, `errorMessage`, that will have the error message.
 - `allTags`: This is an array of objects. Each object contains the attributes for the meta tags and all of the page's meta tags should be available on this property.  Using `Array.filter()` would be a useful way to find any tags that aren't provided by default. See the example below.
+- `resolvedUrl`: The resolved url, after following redirects.
 
 ```javascript
 // If we have an object named 'data' returned when the promise resolves, we can get theme color:
